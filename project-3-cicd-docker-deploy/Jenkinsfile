@@ -65,12 +65,15 @@ pipeline {
     stage("Docker Deploy (Local)") {
       steps {
         sh '''
-          docker rm -f ${CONTAINER_NAME} || true
-
-          docker run -d \
-            --name ${CONTAINER_NAME} \
-            -p 3003:3003 \
-            ${IMAGE_NAME}:${IMAGE_TAG}
+            docker ps -q --filter "publish=3003" | xargs -r docker stop
+            docker ps -aq --filter "publish=3003" | xargs -r docker rm
+            
+            docker rm -f ${CONTAINER_NAME} || true
+            
+            docker run -d \
+              --name ${CONTAINER_NAME} \
+              -p 3003:3003 \
+              ${IMAGE_NAME}:${IMAGE_TAG}
         '''
       }
     }
