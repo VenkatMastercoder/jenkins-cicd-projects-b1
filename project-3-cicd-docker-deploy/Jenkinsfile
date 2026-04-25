@@ -65,11 +65,13 @@ pipeline {
     stage("Docker Deploy (Local)") {
       steps {
         sh '''
-            docker ps -q --filter "publish=3003" | xargs -r docker stop
-            docker ps -aq --filter "publish=3003" | xargs -r docker rm
+            # Stop container if running
+            docker stop ${CONTAINER_NAME} || true
             
-            docker rm -f ${CONTAINER_NAME} || true
+            # Remove container if exists
+            docker rm ${CONTAINER_NAME} || true
             
+            # Run new container
             docker run -d \
               --name ${CONTAINER_NAME} \
               -p 3003:3003 \
