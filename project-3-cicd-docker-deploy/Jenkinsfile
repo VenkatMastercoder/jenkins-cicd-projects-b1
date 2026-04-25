@@ -65,6 +65,8 @@ pipeline {
     stage("Docker Deploy (Local)") {
       steps {
         sh '''
+            fuser -k 3003/tcp || true
+
             # Stop container if running
             docker stop ${CONTAINER_NAME} || true
             
